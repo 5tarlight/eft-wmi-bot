@@ -55,6 +55,10 @@ const getLogFiles = async (): Promise<LogFile[]> => {
     const size = await getSize(name);
     const type = name.endsWith(".tar.gz") ? "archive" : "file";
 
+    if (!name.endsWith(".log") && !name.endsWith(".tar.gz")) {
+      continue;
+    }
+
     files.push({ name, date, size, type });
   }
 
