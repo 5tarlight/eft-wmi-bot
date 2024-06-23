@@ -7,6 +7,7 @@ logger.info(".env configuration loaded!");
 
 export const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN || "";
 export const WEB_PORT = process.env.PORT || 8080;
+export const LOG_DIR = process.env.LOG_DIR || "./logs";
 
 export const validateConfig = () => {
   logger.debug("Validating configuration...");
