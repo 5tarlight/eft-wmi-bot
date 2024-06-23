@@ -37,21 +37,28 @@ const parseDate = (name: string) => {
   return new Date(year, month - 1, day);
 };
 
-const getSize = (name: string) => {
-  return fs.statSync(join(getLogDir(), name)).size;
+const getSize = async (name: string) => {
+  return await fs.promises
+    .stat(join(getLogDir(), name))
+    .then((stat) => stat.size);
 };
 
-const getLogFiles = (): LogFile[] => {
-  const names = fs.readdirSync(getLogDir());
+const getLogFiles = async (): Promise<LogFile[]> => {
+  const names = await fs.promises.readdir(getLogDir());
   const dates = names.map(parseDate);
-  const sizes = names.map(getSize);
 
-  return names.map((name, index) => ({
-    name,
-    date: dates[index],
-    size: sizes[index],
-    type: name.endsWith(".log") ? "file" : "archive",
-  }));
+  const files: LogFile[] = [];
+
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    const date = dates[i];
+    const size = await getSize(name);
+    const type = name.endsWith(".tar.gz") ? "archive" : "file";
+
+    files.push({ name, date, size, type });
+  }
+
+  return files;
 };
 
 const getDateDiff = (date: Date) => {
@@ -69,18 +76,22 @@ export const getLogger = (name: string = "") => {
   for (const level of levels) {
     logger = logger.getSubLogger({ name: level });
 
-    logger.attachTransport((log) => {
-      fs.appendFileSync(getLogFilePath(), JSON.stringify(log) + "\n");
+    logger.attachTransport(async (log) => {
+      await fs.promises.appendFile(
+        getLogFilePath(),
+        JSON.stringify(log) + "\n"
+      );
     });
   }
 
   return logger;
 };
 
-export const cleanLogs = () => {
+export const cleanLogs = async () => {
   const logger = getLogger("log");
   logger.debug("Cleaning logs...");
-  const files = getLogFiles();
+  const files = await getLogFiles();
+
   let totalSize = files.reduce((acc, file) => acc + file.size, 0);
   let unit = "bytes";
   let floorDigit = 0;
@@ -111,13 +122,15 @@ export const cleanLogs = () => {
 
     if (diff >= 7 && diff < 30) {
       const archiveName = `${file.name.replace(".log", "")}.tar.gz`;
+
       tar.c({ gzip: true, file: join(getLogDir(), archiveName) }, [
         join(getLogDir(), file.name),
       ]);
-      fs.unlinkSync(join(getLogDir(), file.name));
+      await fs.promises.unlink(join(getLogDir(), file.name));
 
-      const archiveSize = fs.statSync(join(getLogDir(), archiveName)).size;
-
+      const archiveSize = (
+        await fs.promises.stat(join(getLogDir(), archiveName))
+      ).size;
       let saved = file.size - archiveSize;
       let savedUnit = "bytes";
 
