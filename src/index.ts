@@ -1,7 +1,7 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from "discord.js";
 import { BOT_TOKEN, validateConfig } from "./config";
 import { startWebServer } from "./web";
-import { getLogger } from "./log";
+import { cleanLogs, getLogger } from "./log";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const logger = getLogger();
@@ -22,5 +22,6 @@ client.once(Events.ClientReady, (readyClient) => {
 
 logger.debug("Starting the bot...");
 validateConfig();
+cleanLogs();
 client.login(BOT_TOKEN);
 startWebServer();

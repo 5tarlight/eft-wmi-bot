@@ -17,4 +17,6 @@ export const validateConfig = () => {
     logger.error("DISCORD_BOT_TOKEN is required in .env file", err);
     throw err;
   }
+
+  logger.info("Configuration is valid!");
 };
