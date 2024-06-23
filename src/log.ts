@@ -24,6 +24,18 @@ const getLogFilePath = () => {
   return join(getLogDir(), getLogFileName());
 };
 
+interface LogFile {
+  name: string;
+  date: Date;
+  size: number;
+}
+
+const parse;
+
+const getLogFiles = () => {
+  const names = fs.readdirSync(getLogDir());
+};
+
 export const getLogger = (name: string = "") => {
   const levels = name.split(".");
   let logger = new Logger({ name: "", type: "pretty" });
