@@ -14,10 +14,10 @@ export const validateConfig = () => {
   logger.debug("Validating configuration...");
 
   let err = null;
+  const getMsg = (name: string) => `${name} is required in .env file`;
 
-  if (!BOT_TOKEN) err = new Error("BOT_TOKEN is required in .env file");
-  else if (!BOT_CLIENT_ID)
-    err = new Error("BOT_CLIENT_ID is required in .env file");
+  if (!BOT_TOKEN) err = new Error(getMsg("BOT_TOKEN"));
+  else if (!BOT_CLIENT_ID) err = new Error(getMsg("BOT_CLIENT_ID"));
 
   if (err) {
     logger.error("Configuration validation failed!", err);
