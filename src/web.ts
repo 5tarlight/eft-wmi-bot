@@ -1,6 +1,6 @@
 import express from "express";
 import { WEB_PORT } from "./config";
-import { getLogger } from "./log";
+import { getLogger } from "./log/log";
 
 const logger = getLogger("web");
 logger.debug("Starting the web server...");

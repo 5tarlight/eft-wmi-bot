@@ -1,8 +1,9 @@
 import { Logger } from "tslog";
 import * as fs from "fs";
-import { LOG_DIR } from "./config";
+import { LOG_DIR } from "../config";
 import { join } from "path";
 import * as tar from "tar";
+import { CommandLogger } from "./CommandLogger";
 
 const checkLogDir = (dir: string) => {
   if (!fs.existsSync(dir)) {
