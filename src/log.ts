@@ -148,4 +148,24 @@ export const cleanLogs = async () => {
       );
     }
   }
+
+  for (const file of archives) {
+    const diff = getDateDiff(file.date);
+    logger.silly(`Archive ${file.name} is ${diff} days old`);
+
+    if (diff >= 30) {
+      let size = await getSize(file.name);
+      let unit = "bytes";
+
+      if (size > 1024) {
+        size /= 1024;
+        unit = "KB";
+      }
+
+      await fs.promises.unlink(join(getLogDir(), file.name));
+      logger.debug(
+        `Deleted archive ${file.name}. Saved ${Math.floor(size)} ${unit}.`
+      );
+    }
+  }
 };
