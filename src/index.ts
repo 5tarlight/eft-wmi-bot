@@ -1,13 +1,15 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from "discord.js";
 import { BOT_TOKEN, validateConfig } from "./config";
 import { startWebServer } from "./web";
+import { cleanLogs, getLogger } from "./log";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const logger = getLogger();
 
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  logger.info(`Logged in as ${readyClient.user.tag}`);
 
-  client.user!!.setPresence({
+  readyClient.user.setPresence({
     activities: [
       {
         name: `Escape from Tarkov`,
@@ -18,6 +20,8 @@ client.once(Events.ClientReady, (readyClient) => {
   });
 });
 
+logger.debug("Starting the bot...");
 validateConfig();
+cleanLogs();
 client.login(BOT_TOKEN);
 startWebServer();
