@@ -1,0 +1,41 @@
+{
+  "name": "eft-wmi-bot",
+  "version": "1.0.0",
+  "description": "Discord bot for eft: where am i. Automatically send matching dm.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/5tarlight/eft-wmi-bot.git"
+  },
+  "keywords": [
+    "discord.js"
+  ],
+  "author": "YEAHx4 <developerstarlight@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/5tarlight/eft-wmi-bot/issues"
+  },
+  "homepage": "https://github.com/5tarlight/eft-wmi-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "tar": "^7.4.0",
+    "tslog": "^4.9.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "eslint": "^9.5.0",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.2"
+  }
+}
