@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { BOT_CLIENT_ID, BOT_TOKEN, validateConfig } from "./config";
 import { startWebServer } from "./web";
-import { cleanLogs, getLogger } from "./log";
+import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
 

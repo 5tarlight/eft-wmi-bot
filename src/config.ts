@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { getLogger } from "./log";
+import { getLogger } from "./log/log";
 
 config();
 const logger = getLogger("config");
