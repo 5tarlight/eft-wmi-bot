@@ -11,7 +11,7 @@ import { startWebServer } from "./web";
 import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
-import { closeDatabase } from "./db/Database";
+import { closeDatabase, createTable } from "./db/Database";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -102,4 +102,5 @@ logger.debug("Starting the bot...");
 validateConfig();
 cleanLogs();
 client.login(BOT_TOKEN);
+createTable();
 startWebServer();
