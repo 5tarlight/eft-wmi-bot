@@ -11,8 +11,11 @@ import { startWebServer } from "./web";
 import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
+import { closeDatabase } from "./db/Database";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+});
 const logger = getLogger();
 
 client.once(Events.ClientReady, (readyClient) => {
@@ -79,6 +82,7 @@ const rest = new REST().setToken(BOT_TOKEN);
 const cleanUp = async (code: number) => {
   logger.info("Gracefully shutting down...");
   await client.destroy();
+  closeDatabase();
   logger.info("Cleaned up successfully, exiting...");
   process.exit(code);
 };
