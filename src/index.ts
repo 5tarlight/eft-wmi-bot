@@ -82,7 +82,7 @@ const rest = new REST().setToken(BOT_TOKEN);
 const cleanUp = async (code: number) => {
   logger.info("Gracefully shutting down...");
   await client.destroy();
-  closeDatabase();
+  await closeDatabase();
   logger.info("Cleaned up successfully, exiting...");
   process.exit(code);
 };

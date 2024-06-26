@@ -2,6 +2,7 @@ import { join } from "path";
 import { verbose } from "sqlite3";
 import { getLogger } from "../log/log";
 import { VERIFY_TABLE } from "./dbConst";
+import { promiseDb } from "./util";
 
 const sqlite = verbose();
 const path = join(__dirname, "database.sqlite");
@@ -34,19 +35,26 @@ export const createTable = () => {
 
   const tables = [{ scheme: verifyTableScheme, name: VERIFY_TABLE }];
 
-  tables.forEach((table) => {
-    db.run(table.scheme, (err) => {
-      if (err) logger.error("Failed to create table " + table.name, err);
-      else logger.debug(`Table ${table.name} created successfully`);
-    });
+  tables.forEach(async (table) => {
+    // db.run(table.scheme, (err) => {
+    //   if (err) logger.error("Failed to create table " + table.name, err);
+    //   else logger.debug(`Table ${table.name} created successfully`);
+    // });
+
+    try {
+      await promiseDb.run(table.scheme);
+      logger.debug(`Table ${table.name} created successfully`);
+    } catch (err) {
+      logger.error("Failed to create table " + table.name, err);
+    }
   });
 };
 
-export const closeDatabase = () => {
-  db.close((err) => {
-    if (err) {
-      logger.error("Failed to close database", err);
-    }
-  });
-  logger.info("Database closed successfully");
+export const closeDatabase = async () => {
+  try {
+    await promiseDb.close();
+    logger.info("Database closed successfully");
+  } catch (err) {
+    logger.error("Failed to close database", err);
+  }
 };
