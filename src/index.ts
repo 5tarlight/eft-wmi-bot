@@ -79,7 +79,11 @@ const rest = new REST().setToken(BOT_TOKEN);
   }
 })();
 
+let isShuttingDown = false;
 const cleanUp = async (code: number) => {
+  if (isShuttingDown) return;
+
+  isShuttingDown = true;
   logger.info("Gracefully shutting down...");
   await client.destroy();
   await closeDatabase();
