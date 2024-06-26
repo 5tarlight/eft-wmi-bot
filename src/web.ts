@@ -13,5 +13,5 @@ app.get("/", (req, res) => {
 
 export const startWebServer = () =>
   app.listen(WEB_PORT, () => {
-    logger.info(`Server is running on http://localhost:${WEB_PORT}`);
+    logger.info(`HTTP server is running on http://localhost:${WEB_PORT}`);
   });

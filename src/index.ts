@@ -76,6 +76,24 @@ const rest = new REST().setToken(BOT_TOKEN);
   }
 })();
 
+const cleanUp = async (code: number) => {
+  logger.info("Gracefully shutting down...");
+  await client.destroy();
+  logger.info("Cleaned up successfully, exiting...");
+  process.exit(code);
+};
+
+const unhandledException = (error: Error) => {
+  logger.error("An unhandled exception occurred", error);
+};
+
+process.on("exit", cleanUp.bind(null, 0));
+process.on("SIGINT", cleanUp.bind(null, 0));
+process.on("SIGTERM", cleanUp.bind(null, 0));
+process.on("SIGUSR1", cleanUp.bind(null, 0));
+process.on("SIGUSR2", cleanUp.bind(null, 0));
+process.on("uncaughtException", (err) => unhandledException.bind(null, err)());
+
 logger.debug("Starting the bot...");
 validateConfig();
 cleanLogs();
