@@ -8,6 +8,7 @@ const sqlite = verbose();
 const path = join(__dirname, "database.sqlite");
 const logger = getLogger("db");
 
+logger.debug("Database path:", path);
 export const db = new sqlite.Database(
   path,
   sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE,
@@ -27,7 +28,7 @@ CREATE TABLE IF NOT EXISTS ${VERIFY_TABLE} (
   verify_code TEXT NOT NULL,
   created_at DATE DEFAULT CURRENT_TIMESTAMP,
   updated_at DATE DEFAULT CURRENT_TIMESTAMP
-)
+);
 `;
 
 export interface VerifyRequestTable {
