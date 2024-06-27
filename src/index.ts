@@ -13,7 +13,7 @@ import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
 import { closeDatabase, createTable } from "./db/Database";
 
-const client = new Client({
+export const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 const logger = getLogger();
