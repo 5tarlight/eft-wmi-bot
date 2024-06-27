@@ -18,6 +18,12 @@ export const verifyRequestHandler: RequestHandler = async (
 ) => {
   logger.trace("Received a verify request from IP:", req.ip);
 
+  if (!req.body.identify_code || !req.body.verify_code) {
+    logger.debug("Invalid request body", req.body);
+    res.status(400).send("Invalid request body");
+    return;
+  }
+
   const prevReq = await findVerifyRequestByIdentifyCode(req.body.identify_code);
   if (prevReq) {
     logger.debug("Verify request already exists", prevReq);
