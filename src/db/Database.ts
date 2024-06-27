@@ -23,12 +23,20 @@ export const db = new sqlite.Database(
 const verifyTableScheme = `
 CREATE TABLE IF NOT EXISTS ${VERIFY_TABLE} (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  discord_id TEXT NOT NULL,
+  identify_code TEXT NOT NULL,
   verify_code TEXT NOT NULL,
   created_at DATE DEFAULT CURRENT_TIMESTAMP,
   updated_at DATE DEFAULT CURRENT_TIMESTAMP
 )
 `;
+
+export interface VerifyRequestTable {
+  id: number;
+  identify_code: string;
+  verify_code: string;
+  created_at: Date;
+  updated_at: Date;
+}
 
 export const createTable = () => {
   logger.debug("Creating tables...");
