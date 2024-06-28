@@ -11,8 +11,11 @@ import { startWebServer } from "./web";
 import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
+import { closeDatabase, createTable } from "./db/Database";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+export const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+});
 const logger = getLogger();
 
 client.once(Events.ClientReady, (readyClient) => {
@@ -76,8 +79,32 @@ const rest = new REST().setToken(BOT_TOKEN);
   }
 })();
 
+let isShuttingDown = false;
+const cleanUp = async (code: number) => {
+  if (isShuttingDown) return;
+
+  isShuttingDown = true;
+  logger.info("Gracefully shutting down...");
+  await client.destroy();
+  await closeDatabase();
+  logger.info("Cleaned up successfully, exiting...");
+  process.exit(code);
+};
+
+const unhandledException = (error: Error) => {
+  logger.error("An unhandled exception occurred", error);
+};
+
+process.on("exit", cleanUp.bind(null, 0));
+process.on("SIGINT", cleanUp.bind(null, 0));
+process.on("SIGTERM", cleanUp.bind(null, 0));
+process.on("SIGUSR1", cleanUp.bind(null, 0));
+process.on("SIGUSR2", cleanUp.bind(null, 0));
+process.on("uncaughtException", (err) => unhandledException.bind(null, err)());
+
 logger.debug("Starting the bot...");
 validateConfig();
 cleanLogs();
 client.login(BOT_TOKEN);
+createTable();
 startWebServer();
