@@ -38,5 +38,11 @@ export const Verify = {
     await interaction.showModal(modal);
   },
 
-  async handleVerification(interaction: ModalSubmitInteraction) {},
+  async handleVerification(interaction: ModalSubmitInteraction) {
+    const token = interaction.fields.getTextInputValue(VERIFY_TOKEN_INPUT_ID);
+    await interaction.reply({
+      content: `You entered: ${token}`,
+      ephemeral: true,
+    });
+  },
 };
