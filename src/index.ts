@@ -60,7 +60,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
     }
   } else if (interaction.isModalSubmit()) {
-    logger.debug(
+    logger.trace(
       `Received a modal submit(${interaction.customId}) from ${interaction.user.tag}`
     );
     const id = interaction.customId;

@@ -45,11 +45,6 @@ export const createTable = () => {
   const tables = [{ scheme: verifyTableScheme, name: VERIFY_TABLE }];
 
   tables.forEach(async (table) => {
-    // db.run(table.scheme, (err) => {
-    //   if (err) logger.error("Failed to create table " + table.name, err);
-    //   else logger.debug(`Table ${table.name} created successfully`);
-    // });
-
     try {
       await promiseDb.run(table.scheme);
       logger.debug(`Table ${table.name} created successfully`);
