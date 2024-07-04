@@ -12,6 +12,7 @@ import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
 import { Command } from "./commands/Command";
 import { closeDatabase, createTable } from "./db/Database";
+import { Verify } from "./commands/verify";
 
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -32,7 +33,7 @@ client.once(Events.ClientReady, (readyClient) => {
   });
 });
 
-const slashCommands: Command[] = [Ping];
+const slashCommands: Command[] = [Ping, Verify];
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isChatInputCommand()) {
