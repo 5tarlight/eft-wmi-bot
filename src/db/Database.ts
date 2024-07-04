@@ -1,7 +1,7 @@
 import { join } from "path";
 import { verbose } from "sqlite3";
 import { getLogger } from "../log/log";
-import { VERIFY_TABLE } from "./dbConst";
+import { MATCH_NOTIFY_TABLE, VERIFY_TABLE } from "./dbConst";
 import { promiseDb } from "./util";
 
 const sqlite = verbose();
@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS ${VERIFY_TABLE} (
 );
 `;
 
+const matchNotifyTableScheme = `
+CREATE TABLE IF NOT EXISTS ${MATCH_NOTIFY_TABLE} (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  discord_id TEXT NOT NULL,
+  identity_code TEXT NOT NULL,
+  created_at DATE DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATE DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
 export interface VerifyRequestTable {
   id: number;
   identify_code: string;
@@ -39,10 +49,21 @@ export interface VerifyRequestTable {
   updated_at: Date;
 }
 
+export interface MatchNotifyTable {
+  id: number;
+  discord_id: string;
+  identity_code: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export const createTable = () => {
   logger.debug("Creating tables...");
 
-  const tables = [{ scheme: verifyTableScheme, name: VERIFY_TABLE }];
+  const tables = [
+    { scheme: verifyTableScheme, name: VERIFY_TABLE },
+    { scheme: matchNotifyTableScheme, name: MATCH_NOTIFY_TABLE },
+  ];
 
   tables.forEach(async (table) => {
     try {
