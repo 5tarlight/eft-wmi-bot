@@ -11,7 +11,14 @@ import {
   TextInputStyle,
 } from "discord.js";
 import { getLogger } from "../log/log";
-import { findVerifyRequestByVerifyCode } from "../db/verifyRequest";
+import {
+  deleteVerifyRequestByVerifyCode,
+  findVerifyRequestByVerifyCode,
+} from "../db/verifyRequest";
+import {
+  findMatchNotifyByIdentityCode,
+  insertMatchNotify,
+} from "../db/mathNotify";
 
 export const VERIFY_MODAL_ID = "eft-wmi-verify-modal";
 export const VERIFY_TOKEN_INPUT_ID = "eft-wmi-verify-token-input";
@@ -54,20 +61,39 @@ export const Verify = {
 
     const verifyRequest = await findVerifyRequestByVerifyCode(token);
     if (!verifyRequest) {
-      logger.debug(
+      logger.trace(
         `Invalid verify token: ${token} for ${interaction.user.tag}(${userId})`
       );
       await interaction.reply({
-        content: "Error: Invalid token. Please try again.",
+        content: ":warning: Error: Invalid token. Please try again.",
         ephemeral: true,
       });
       return;
     }
 
-    logger.debug(`Token verified for ${interaction.user.tag}(${userId}).`);
+    logger.trace(`Token verified for ${interaction.user.tag}(${userId}).`);
+    logger.trace(`Deleting verify request, token: ${token}`);
+    await deleteVerifyRequestByVerifyCode(token);
+
+    const identityCode = verifyRequest.identify_code;
+    logger.trace(
+      `Inserting match notify for ${interaction.user.tag}(${userId}), identify code: ${identityCode}`
+    );
+    const isDuplicate = await findMatchNotifyByIdentityCode(identityCode);
+    if (isDuplicate) {
+      logger.trace(
+        `Match notify already exists for ${interaction.user.tag}(${userId}), identify code: ${identityCode}`
+      );
+      await interaction.reply({
+        content: ":warning: Error: That client is already verified and linked.",
+        ephemeral: true,
+      });
+      return;
+    }
+    insertMatchNotify({ discord_id: userId, identity_code: identityCode });
 
     await interaction.reply({
-      content: `You entered: ${token}`,
+      content: `Successfully verified your EFT: WMI client.\nNow you will receive notifications for your matches.`,
       ephemeral: true,
     });
   },
