@@ -3,6 +3,7 @@ import {
   Client,
   Events,
   GatewayIntentBits,
+  ModalSubmitInteraction,
   REST,
   Routes,
 } from "discord.js";
@@ -10,8 +11,9 @@ import { BOT_CLIENT_ID, BOT_TOKEN, validateConfig } from "./config";
 import { startWebServer } from "./web";
 import { cleanLogs, getLogger } from "./log/log";
 import { Ping } from "./commands/ping";
-import { Command } from "./commands/Command";
+import { Command, ModalSubmitHandler } from "./commands/Command";
 import { closeDatabase, createTable } from "./db/Database";
+import { VERIFY_MODAL_ID, Verify } from "./commands/verify";
 
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -32,7 +34,10 @@ client.once(Events.ClientReady, (readyClient) => {
   });
 });
 
-const slashCommands: Command[] = [Ping];
+const slashCommands: Command[] = [Ping, Verify];
+const modalSubmitHandlers: ModalSubmitHandler = {
+  [VERIFY_MODAL_ID]: Verify.handleVerification,
+};
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isChatInputCommand()) {
@@ -54,6 +59,24 @@ client.on(Events.InteractionCreate, async (interaction) => {
         );
       }
     }
+  } else if (interaction.isModalSubmit()) {
+    logger.trace(
+      `Received a modal submit(${interaction.customId}) from ${interaction.user.tag}`
+    );
+    const id = interaction.customId;
+
+    if (id in modalSubmitHandlers) {
+      try {
+        await modalSubmitHandlers[id](interaction);
+      } catch (error) {
+        logger.error("An error occurred while handling a modal submit", error);
+        await interaction.reply(
+          "An error occurred while handling this request"
+        );
+      }
+    } else {
+      logger.warn(`No handler found for modal submit ${id}`);
+    }
   }
 });
 
@@ -70,10 +93,10 @@ const rest = new REST().setToken(BOT_TOKEN);
       }
     );
 
-    logger.info("Successfully reloaded application (/) commands");
+    logger.info("Successfully reloaded application slash commands");
   } catch (error) {
     logger.error(
-      "An error occurred while refreshing application (/) commands",
+      "An error occurred while refreshing application slash commands",
       error
     );
   }

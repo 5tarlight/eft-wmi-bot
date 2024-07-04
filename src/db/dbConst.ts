@@ -1,4 +1,5 @@
 export const VERIFY_TABLE = "verify_request";
+export const MATCH_NOTIFY_TABLE = "match_notify";
 // export const STRING_TYPE = "TEXT";
 // export const NUMBER_TYPE = "INTEGER";
 // export const BOOLEAN_TYPE = "BOOLEAN";
